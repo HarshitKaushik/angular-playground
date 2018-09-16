@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Event Binding</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+
+<body>
+  <button id="button">Click Me</button>
+  <script>
+    //  Reference article: https://blog.bitsrc.io/event-binding-mechanism-in-angular-b38f0e46d2ed
+
+    // We create a class AppComponent that has a clickEvent() function that
+    // will be called when the button is clicked
+    class AppComponent {
+      clickEvent() {
+        console.log('Clicked!!!');
+      }
+    }
+
+    // DOMRenderer class
+    class DOMRenderer {
+      // Listen function that attaches a callback to an event on a target HTMLElement
+      listen(target, event, callback) {
+        // Uses the addEventListener API to attach a callback
+        target.addEventListener(event, callback);
+      }
+    }
+
+    // button element from the page
+    const button = document.getElementById('button');
+
+    // The outputs array that contains the names of events
+    let outputs = ['click'];
+    // An instance of the DOMRenderer class
+    let renderer = new DOMRenderer();
+
+    // handleEvent function
+    let handleEvent = function (_v, en, $event) {
+      if (('click' === en)) {
+        _v.clickEvent();
+      }
+    }
+
+    // A function that traverses the outputs array and attaches the event with target with a closure callback function
+    function listenToElementOutputs(target, outputs, _v) {
+      for (var index = 0; index < outputs.length; index++) {
+        const event = outputs[index];
+        const handleEventClosure = renderEventHandlerClosure(_v, event);
+        renderer.listen(target, event, handleEventClosure);
+      }
+    }
+
+    // Render event handler closure. Angular uses closure to accomplish access
+    // to _v and eventName in the callback function
+    function renderEventHandlerClosure(_v, eventName) {
+      return (event) => dispatchEvent(_v, eventName, event);
+    }
+
+    // dispatch event
+    function dispatchEvent(_v, eventName, event) {
+      return handleEvent(_v, eventName, event);
+    }
+    // Listen to element outputs. Attaches the event listeners to the button element
+    listenToElementOutputs(button, outputs, new AppComponent());
+  </script>
+</body>
+
+</html>
