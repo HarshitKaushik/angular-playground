@@ -1,0 +1,23 @@
+<div cdkDrag cdkDragLockAxis="x">
+  I'm Draggable
+</div>
+
+<cdk-drop (dropped)="onDrop($event)">
+  <div *ngFor="let item of items" cdkDrag>{{item}}</div>
+</cdk-drop>
+
+<section>
+  <section>
+    <h4>List One</h4>
+    <cdk-drop #listOne [connectedTo]="[listTwo]" (dropped)="addToList($event)" [data]="items2">
+      <div *ngFor="let item of items2" cdkDrag>{{item}}
+      </div>
+    </cdk-drop>
+  </section>
+  <section>
+    <h4>List Two</h4>
+    <cdk-drop #listTwo [connectedTo]="[listOne]" (dropped)="addToList($event)" [data]="items3">
+      <div *ngFor="let item of items3" cdkDrag>{{item}}</div>
+    </cdk-drop>
+  </section>
+</section>
